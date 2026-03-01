@@ -345,6 +345,10 @@
   </gazebo>
   <gazebo>
     <plugin filename="libgazebo_ros_diff_drive.so" name="differential_drive_controller">
+      <ros>
+        <remapping>cmd_vel:=cmd_vel_noisy</remapping>
+      </ros>
+
       <alwaysOn>true</alwaysOn>
       <updateRate>10</updateRate>
       <leftJoint>wheel_left_joint</leftJoint>
@@ -352,7 +356,7 @@
       <wheelSeparation>0.235</wheelSeparation>
       <wheelDiameter>0.070</wheelDiameter>
       <torque>1.0</torque>
-      <commandTopic>cmd_vel</commandTopic>
+      <commandTopic>cmd_vel_noisy</commandTopic>
       <odometryTopic>odom</odometryTopic>
       <odometryFrame>odom</odometryFrame>
       <robotBaseFrame>base_footprint</robotBaseFrame>
