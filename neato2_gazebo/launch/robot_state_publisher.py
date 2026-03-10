@@ -38,6 +38,9 @@ def generate_launch_description():
         'urdf',
         urdf_file_name)
 
+    with open(urdf, 'r') as infp:
+        robot_description_content = infp.read()
+
     return LaunchDescription([
         tf_prefix_command,
         DeclareLaunchArgument(
@@ -50,6 +53,8 @@ def generate_launch_description():
             name='robot_state_publisher',
             output='screen',
             parameters=[{'use_sim_time': use_sim_time,
-                         'frame_prefix': tf_prefix}],
-            arguments=[urdf]),
+                         'frame_prefix': tf_prefix,
+                         'robot_description': robot_description_content}],
+            # arguments=[urdf]
+            ),
     ])
