@@ -14,60 +14,57 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Authors: Darby Lim 
+# Authors: Darby Lim
 import os
 
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 
+
 def generate_launch_description():
-    models_dir = os.path.join(get_package_share_directory('neato2_gazebo'), 'models')
-    if 'GAZEBO_MODEL_PATH' in os.environ:
-        os.environ['GAZEBO_MODEL_PATH'] += ':' + models_dir
+    models_dir = os.path.join(get_package_share_directory("neato2_gazebo"), "models")
+    if "GAZEBO_MODEL_PATH" in os.environ:
+        os.environ["GAZEBO_MODEL_PATH"] += ":" + models_dir
     else:
-        os.environ['GAZEBO_MODEL_PATH'] = models_dir
-        
+        os.environ["GAZEBO_MODEL_PATH"] = models_dir
+
     # Disable online model database to prevent startup hangs
-    os.environ['GAZEBO_MODEL_DATABASE_URI'] = ''
+    os.environ["GAZEBO_MODEL_DATABASE_URI"] = ""
 
-    use_sim_time = LaunchConfiguration('use_sim_time', default='True')
-    world_file_name = 'empty.world'
-    world = os.path.join(get_package_share_directory('neato2_gazebo'),
-                         'worlds',
-                          world_file_name)
-    launch_file_dir = os.path.join(get_package_share_directory('neato2_gazebo'), 'launch')
-    pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
+    use_sim_time = LaunchConfiguration("use_sim_time", default="True")
+    world_file_name = "empty.world"
+    world = os.path.join(
+        get_package_share_directory("neato2_gazebo"), "worlds", world_file_name
+    )
+    launch_file_dir = os.path.join(
+        get_package_share_directory("neato2_gazebo"), "launch"
+    )
+    pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
 
-
-    return LaunchDescription([
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                os.path.join(pkg_gazebo_ros, 'launch', 'gzserver.launch.py')
+    return LaunchDescription(
+        [
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    os.path.join(pkg_gazebo_ros, "launch", "gzserver.launch.py")
+                ),
+                launch_arguments={"world": world}.items(),
             ),
-            launch_arguments={'world': world}.items(),
-        ),
-
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                os.path.join(pkg_gazebo_ros, 'launch', 'gzclient.launch.py')
-            )
-        ),
-
-        Node(
-            package='neato_node2',
-            executable='simulator_adapter'),
-
-        Node(
-            package='fix_scan',
-            executable='scan_to_pc2'),
-
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([launch_file_dir, '/robot_state_publisher.py']),
-            launch_arguments={'use_sim_time': use_sim_time}.items(),
-        ),
-    ])
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    os.path.join(pkg_gazebo_ros, "launch", "gzclient.launch.py")
+                )
+            ),
+            Node(package="neato_node2", executable="simulator_adapter"),
+            Node(package="fix_scan", executable="scan_to_pc2"),
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    [launch_file_dir, "/robot_state_publisher.py"]
+                ),
+                launch_arguments={"use_sim_time": use_sim_time}.items(),
+            ),
+        ]
+    )

@@ -26,35 +26,41 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
-    tf_prefix = LaunchConfiguration('tf_prefix')
-    tf_prefix_command = DeclareLaunchArgument('tf_prefix', default_value='')
-    urdf_file_name = 'neato.urdf'
+    use_sim_time = LaunchConfiguration("use_sim_time", default="false")
+    tf_prefix = LaunchConfiguration("tf_prefix")
+    tf_prefix_command = DeclareLaunchArgument("tf_prefix", default_value="")
+    urdf_file_name = "neato.urdf"
 
-    print('urdf_file_name : {}'.format(urdf_file_name))
+    print("urdf_file_name : {}".format(urdf_file_name))
 
     urdf = os.path.join(
-        get_package_share_directory('neato2_gazebo'),
-        'urdf',
-        urdf_file_name)
+        get_package_share_directory("neato2_gazebo"), "urdf", urdf_file_name
+    )
 
-    with open(urdf, 'r') as infp:
+    with open(urdf, "r") as infp:
         robot_description_content = infp.read()
 
-    return LaunchDescription([
-        tf_prefix_command,
-        DeclareLaunchArgument(
-            'use_sim_time',
-            default_value='false',
-            description='Use simulation (Gazebo) clock if true'),
-        Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            name='robot_state_publisher',
-            output='screen',
-            parameters=[{'use_sim_time': use_sim_time,
-                         'frame_prefix': tf_prefix,
-                         'robot_description': robot_description_content}],
-            # arguments=[urdf]
+    return LaunchDescription(
+        [
+            tf_prefix_command,
+            DeclareLaunchArgument(
+                "use_sim_time",
+                default_value="false",
+                description="Use simulation (Gazebo) clock if true",
             ),
-    ])
+            Node(
+                package="robot_state_publisher",
+                executable="robot_state_publisher",
+                name="robot_state_publisher",
+                output="screen",
+                parameters=[
+                    {
+                        "use_sim_time": use_sim_time,
+                        "frame_prefix": tf_prefix,
+                        "robot_description": robot_description_content,
+                    }
+                ],
+                # arguments=[urdf]
+            ),
+        ]
+    )
